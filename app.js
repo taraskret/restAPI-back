@@ -65,7 +65,7 @@ app.use((error, req, res, next) => {
  
 mongoose
   .connect(
-    'mongodb+srv://TarasShop:meHanik88@cluster0.ixaop.mongodb.net/messagess?retryWrites=true', { useUnifiedTopology: true, useNewUrlParser: true }
+    'mongodb+srv://TarasShop:meHanik@cluster0.ixaop.mongodb.net/messagess?retryWrites=true', { useUnifiedTopology: true, useNewUrlParser: true }
 
    // 'mongodb+srv://maximilian:9u4biljMQc4jjqbe@cluster0-ntrwp.mongodb.net/messages?retryWrites=true'
   )
