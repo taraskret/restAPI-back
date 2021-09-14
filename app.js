@@ -1,14 +1,14 @@
 const path = require('path');
+require('dotenv').config();
+
 
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const multer = require('multer');
 
-
 const feedRoutes = require('./routes/feed');
 const authRoutes = require('./routes/auth');
-
 
 const app = express();
 
@@ -17,8 +17,8 @@ const fileStorage = multer.diskStorage({
     cb(null, 'images');
   },
   filename: (req, file, cb) => {
-    cb(null,  file.originalname);
-  }  
+    cb(null, new Date().toISOString() + '-' + file.originalname);
+  }
 });
 
 const fileFilter = (req, file, cb) => {
@@ -38,7 +38,7 @@ app.use(bodyParser.json()); // application/json
 app.use(
   multer({ storage: fileStorage, fileFilter: fileFilter }).single('image')
 );
-app.use(express.static( 'images'));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -53,8 +53,6 @@ app.use((req, res, next) => {
 app.use('/feed', feedRoutes);
 app.use('/auth', authRoutes);
 
-
-
 app.use((error, req, res, next) => {
   console.log(error);
   const status = error.statusCode || 500;
@@ -62,19 +60,18 @@ app.use((error, req, res, next) => {
   const data = error.data;
   res.status(status).json({ message: message, data: data });
 });
- 
-mongoose
-  .connect(
-    'mongodb+srv://TarasShop:meHanik@cluster0.ixaop.mongodb.net/messagess?retryWrites=true', { useUnifiedTopology: true, useNewUrlParser: true }
 
-   // 'mongodb+srv://maximilian:9u4biljMQc4jjqbe@cluster0-ntrwp.mongodb.net/messages?retryWrites=true'
+const mongo = process.env.MONGODB
+mongoose
+  .connect( 
+    mongo, { useUnifiedTopology: true, useNewUrlParser: true }
+
   )
   .then(result => {
     const server = app.listen(8080);
     const io = require('./socket').init(server);
     io.on('connection', socket => {
-      console.log('client connected!!!!!!!!!!!!!!!!!!!!!!!');
+      console.log('Client connected');
     });
-  })  
-  .catch(err => console.log(err));  
- 
+  })
+  .catch(err => console.log(err));

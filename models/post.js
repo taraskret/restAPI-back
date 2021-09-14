@@ -3,12 +3,22 @@ const Schema = mongoose.Schema;
 
 const postSchema = new Schema(
   {
-    title: String,
-    imageUrl: String,
-    content: String,
+    title: {
+      type: String,
+      required: true
+    },
+    imageUrl: {
+      type: String,
+      required: true
+    },
+    content: {
+      type: String,
+      required: true
+    },
     creator: {
       type: Schema.Types.ObjectId,
-      ref: 'User'
+      ref: 'User',
+      required: true
     }
   },
   { timestamps: true }
